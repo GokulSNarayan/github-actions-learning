@@ -2,10 +2,23 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
+import { useState } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
+  const [todos, setTodos] = useState([]) // State to store the todos
+
+  const addTodo = (todo) => {
+    setTodos([...todos, todo]) // Add a new todo to the list
+  }
+
+  const removeTodo = (index) => {
+    const updatedTodos = [...todos]
+    updatedTodos.splice(index, 1)
+    setTodos(updatedTodos)
+  }
+
   return (
     <>
       <Head>
@@ -15,11 +28,24 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={`${styles.main} ${inter.className}`}>
-
-       <h1>Congratulations!</h1>
-  <p>You've completed the essentials of automated application deployment with GitHub Actions! 🥳</p>
-   <h4>This is major relese</h4>
-
+        <h1>Todo List</h1>
+        <form onSubmit={(e) => {
+          e.preventDefault()
+          const todo = e.target.todo.value
+          addTodo(todo)
+          e.target.todo.value = ''
+        }}>
+          <input type="text" name="todo" placeholder="Enter a todo" />
+          <button type="submit">Add Todo</button>
+        </form>
+        <ul className='todo-list'>
+          {todos.map((todo, index) => (
+            <li className='todo-item' key={index}>
+              {todo}
+              <button onClick={() => removeTodo(index)}>X</button>
+            </li>
+          ))}
+        </ul>
       </main>
     </>
   )
