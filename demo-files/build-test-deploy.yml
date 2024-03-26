@@ -33,6 +33,7 @@ jobs:
 
   deploy:
     needs: test
+    runs-on: ubuntu-latest
 
     permissions:
       contents: write
@@ -43,7 +44,6 @@ jobs:
       name: production
       url: ${{ steps.deployment.outputs.page_url }}
 
-    runs-on: ubuntu-latest
 
     steps:
       - name: checkout repo
