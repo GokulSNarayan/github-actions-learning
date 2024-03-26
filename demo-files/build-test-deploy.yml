@@ -2,49 +2,49 @@ name: build-test-deploy
 
 on: push
 
-jobs:
+jobs: 
   build:
     runs-on: ubuntu-latest
 
-    steps:
+    steps: 
       - name: checkout repo
         uses: actions/checkout@v3
       - name: use node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18.x"
+          node-version: '18.x'
       - run: npm install
-      - run: npm run build
+      - run: npm run build 
 
-  test:
+  test: 
     needs: build
 
     runs-on: ubuntu-latest
 
-    steps:
+    steps: 
       - name: checkout repo
         uses: actions/checkout@v3
       - name: use node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18.x"
+          node-version: '18.x'
       - run: npm install
       - run: npm test
 
   deploy:
     needs: test
-    runs-on: ubuntu-latest
 
     permissions:
       contents: write
-      pages: write
-      id-token: write
+      pages: write     
+      id-token: write  
 
     environment:
       name: production
       url: ${{ steps.deployment.outputs.page_url }}
-
-
+    
+    runs-on: ubuntu-latest
+    
     steps:
       - name: checkout repo
         uses: actions/checkout@v3
@@ -53,33 +53,17 @@ jobs:
       - name: use node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18.x"
+          node-version: '18.x'
       - name: configure github pages
         uses: actions/configure-pages@v3
         with:
           static_site_generator: next
       - run: npm install
-      - run: npm run build
+      - run: npm run build    
       - name: upload artifacts
         uses: actions/upload-pages-artifact@v1
-        with:
-          path: "./out"
+        with: 
+          path: './out'
       - name: deploy
         id: deployment
         uses: actions/deploy-pages@v1
-  
-  release-tag:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Bump version and push tag
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Create a GitHub release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ steps.tag_version.outputs.new_tag }}
-          name: Release ${{ steps.tag_version.outputs.new_tag }}
-          body: ${{ steps.tag_version.outputs.changelog }}
